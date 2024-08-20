@@ -7,9 +7,7 @@ def merge_pdfs(pdf_list, output_file):
     for pdf in pdf_list:
         merger.append(pdf)
 
-    merger.write(output_file)
+    with open(output_file, "wb") as f:
+        merger.write(f)
+
     merger.close()
-
-
-pdf_files = ["file1.pdf", "file2.pdf"]
-merge_pdfs(pdf_files, "merged.pdf")

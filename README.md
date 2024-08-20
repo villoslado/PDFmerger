@@ -10,10 +10,4 @@ This simple Python script merges multiple PDF files into a single PDF document. 
 
 ## Requirements
 
-- Python 3.x
-- `PyPDF2` library
-
-You can install the required library using pip:
-
-```bash
-pip install PyPDF2
+WIP
