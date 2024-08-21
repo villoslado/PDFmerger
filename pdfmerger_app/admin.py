@@ -1,7 +1,1 @@
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("pdfmerger_app.urls")),
-]
+# No models to register yet
