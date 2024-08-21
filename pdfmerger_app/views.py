@@ -7,7 +7,10 @@ import os
 
 def merge_view(request):
     if request.method == "POST":
-        form = pdf_merge_form(request.POST, request.FILES)
+        form = pdf_merge_form(
+            request.POST,
+            request.FILES,
+        )
 
         if form.is_valid():
             files = request.FILES.getlist("files")
