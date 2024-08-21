@@ -1,48 +1,58 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .forms import PDFMergeForm
+from .forms import pdf_merge_form
 from .utils import merge_pdfs
 import os
 
 
 def merge_view(request):
     if request.method == "POST":
-        files = request.FILES.getlist("files")
+        form = pdf_merge_form(request.POST, request.FILES)
 
-        if len(files) >= 2:
-            file_paths = []
+        if form.is_valid():
+            files = request.FILES.getlist("files")
 
-            try:
-                for file in files:
-                    file_path = f"/tmp/{file.name}"
-                    file_paths.append(file_path)
-                    with open(file_path, "wb+") as f:
-                        for chunk in file.chunks():
-                            f.write(chunk)
+            if len(files) >= 2:
+                file_paths = []
 
-                output_path = "/tmp/merged.pdf"
-                merge_pdfs(file_paths, output_path)
+                try:
+                    for file in files:
+                        file_path = f"/tmp/{file.name}"
+                        file_paths.append(file_path)
+                        with open(file_path, "wb+") as f:
+                            for chunk in file.chunks():
+                                f.write(chunk)
 
-                with open(output_path, "rb") as merged_file:
-                    response = HttpResponse(
-                        merged_file.read(), content_type="application/pdf"
-                    )
-                    response["Content-Disposition"] = (
-                        'attachment; filename="merged.pdf"'
-                    )
+                    output_path = "/tmp/merged.pdf"
+                    merge_pdfs(file_paths, output_path)
 
-                return response
+                    with open(output_path, "rb") as merged_file:
+                        response = HttpResponse(
+                            merged_file.read(), content_type="application/pdf"
+                        )
+                        response["Content-Disposition"] = (
+                            'attachment; filename="merged.pdf"'
+                        )
 
-            finally:
-                for path in file_paths:
-                    if os.path.exists(path):
-                        os.remove(path)
-                if os.path.exists(output_path):
-                    os.remove(output_path)
+                    return response
 
-        else:
-            return HttpResponse("Upload at least two PDF files.", status=400)
+                finally:
+                    for path in file_paths:
+                        if os.path.exists(path):
+                            os.remove(path)
+                    if os.path.exists(output_path):
+                        os.remove(output_path)
+
+            else:
+                return HttpResponse(
+                    "Upload at least two PDF files.",
+                    status=400,
+                )
     else:
-        form = PDFMergeForm()
+        form = pdf_merge_form()
 
-    return render(request, "pdfmerger_app/merge_form.html", {"form": form})
+    return render(
+        request,
+        "pdfmerger_app/merge_form.html",
+        {"form": form},
+    )

@@ -3,5 +3,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("pdfmerger_app.urls")),
+    path("merge/", include("pdfmerger_app.urls")),  # Only include 'merge/' once here
 ]
